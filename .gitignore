@@ -1,0 +1,6 @@
+*.pyc
+Lib/
+Include/
+Scripts/
+Logs/
+geckodriver.log
