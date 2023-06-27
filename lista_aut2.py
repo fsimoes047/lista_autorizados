@@ -146,41 +146,29 @@ def main():
                 nucleos = refresh_nucleos(browser)
                 nucleo = nucleos[cntn].text
                 nucleos[cntn].click()
+
                 try:
                     aut = WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH, '//span[text()="Autorizados"]')))
                     aut.click()
-#                    auts=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//button[contains(@class,"od-FieldRender-lookup")]')))
                 except NoSuchElementException:
                     print('Menu Autorizados inexistente.')
                     cntn+=1
-#                    nucleos = refresh_nucleos(browser)
                     WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH, '//a[@title="Área"]/span'))).click()
                     time.sleep(2)
                     continue
-#                    print(len(auts)) 
+
                 try:
                     auts=WebDriverWait(browser,10).until(EC.visibility_of_all_elements_located((By.XPATH, '//button[contains(@class,"od-FieldRender-lookup")]')))
                 except TimeoutException:
                     print('Sem autorizados.')
                     cntn+=1
-#                    nucleos = refresh_nucleos(browser)
                     WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH, '//a[@title="Área"]/span'))).click()
-#                    nucleos = refresh_nucleos(browser)
-#                    nucleo = nucleos[cntn].text
-#                    nucleos[cntn].click()
-#                    print(nucleo,nucleos[cntn])
                     time.sleep(2)
                     continue
 
-#                if auts==[]:
-#                    cntn+=1
-#                    print('Página vazia.')
-#                    nucleos = refresh_nucleos(browser)
-#                    WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH, '//a[@title="Área"]/span'))).click()
-#                    continue
+
                  
                 if auts!=[]:
-#                        browser.back()
                     
                     WebDriverWait(browser, 25).until(EC.element_to_be_clickable((By.XPATH,'//span[contains(text(),"Aplicações Suportadas")]'))).click()
                     try:
@@ -192,10 +180,11 @@ def main():
                         print('Sem aplicações!')
                         WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH, '//a[@title="Área"]/span'))).click()
                         continue
-                    print(len(cas),len(cod),len(pool))
+#                    print(len(cas),len(cod),len(pool))
                     tups=[]
                     for index in range(len(cas)):
                         tups.append((cas[index].text,cod[index].text,pool[index].text))
+
 
                     WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH,'//a[@title="Contactos"]'))).click()
                     nome=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//button[@data-automationid="FieldRenderer-name"]')))
@@ -204,8 +193,7 @@ def main():
                     except TimeoutException:
                         email=[]
                         ema=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//div[@class="od-FieldRenderer-text fieldText_875b1af5"]')))
-#                        for em in ema:
-#                            print(em.location)
+
                         for em in ema:
                             if em.location['x'] ==  668:
                                 email.append(em)
