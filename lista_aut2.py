@@ -97,10 +97,24 @@ def get_window1(naut,browser):
     new_window= browser.window_handles[1]
     browser.switch_to.window(new_window)
     
-    e_mail = WebDriverWait(browser,15).until(EC.element_to_be_clickable((By.XPATH, '//div[@class="sp-field-customFormatter"]/a'))).text
-    user =  WebDriverWait(browser,15).until(EC.element_to_be_clickable((By.XPATH, '//div[contains(@class,"field_875b1af5")]'))).text
+    try:
+        e_mail = WebDriverWait(browser,10).until(EC.element_to_be_clickable((By.XPATH, '//div[@class="sp-field-customFormatter"]/a'))).text
+    except TimeoutException:
+        try:
+            e_mail =WebDriverWait(browser,10).until(EC.element_to_be_clickable((By.XPATH, '(//div[contains(@class,"od-FieldRenderer-text")])[2]'))).text
+        except TimeoutException:
+            e_mail=""
+            pass
+        pass
+    try:
+        user =  WebDriverWait(browser,10).until(EC.element_to_be_clickable((By.XPATH, '//div[contains(@class,"field_875b1af5")]'))).text
+    except TimeoutException:       
+        user=""
+        pass
+
     browser.close()
     browser.switch_to.window(cur_window)
+    print(e_mail +" | "+user)
     return e_mail,user
 
 def main():
@@ -234,18 +248,24 @@ def main():
 
 
                     aut = WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH, '//span[text()="Autorizados"]'))).click()
+
                     auts=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//button[contains(@class,"od-FieldRender-lookup")]')))
-                    
+
+                    print(len(auts))
                     nomes=[]
-                    for naut in auts:
-                        browser.execute_script("return arguments[0].scrollIntoView();", naut)
+                    for x,naut in enumerate(auts):
+#                        if x % 14==0 and x > 0:
+#                            browser.execute_script("window.scrollTo(549, 210)")
+#                            browser.execute_script("return arguments[0].scrollIntoView();", naut)
+
                         if naut.location['x'] == 518:
-                            e_mail, user = get_window1(naut,browser)
+#                            e_mail, user = get_window1(naut,browser)
 
                             for no in nomes:
                                 if naut.text in no[0]:
                                     break
                             else:
+                                e_mail, user = get_window1(naut,browser)
                                 nomes.append((naut.text,e_mail, user))                                
 
                     for index2 in range(len(auts)):

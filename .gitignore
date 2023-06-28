@@ -4,3 +4,4 @@ Include/
 Scripts/
 Logs/
 geckodriver.log
+*.xlsx
