@@ -89,6 +89,20 @@ def refresh_nucleos(browser):
     nucleos = WebDriverWait(browser,15).until(EC.visibility_of_all_elements_located((By.XPATH, '//div[@data-automation-id="quick-links-item-title"]')))
     return nucleos
 
+
+def get_window1(naut,browser):
+    naut.click()
+    cur_window=browser.current_window_handle
+    WebDriverWait(browser, 10).until(EC.number_of_windows_to_be(2))
+    new_window= browser.window_handles[1]
+    browser.switch_to.window(new_window)
+    
+    e_mail = WebDriverWait(browser,15).until(EC.element_to_be_clickable((By.XPATH, '//div[@class="sp-field-customFormatter"]/a'))).text
+    user =  WebDriverWait(browser,15).until(EC.element_to_be_clickable((By.XPATH, '//div[contains(@class,"field_875b1af5")]'))).text
+    browser.close()
+    browser.switch_to.window(cur_window)
+    return e_mail,user
+
 def main():
     
     logging.basicConfig(filename=LOG_PATH + '\list_aut.log', filemode='a', \
@@ -186,40 +200,53 @@ def main():
                         tups.append((cas[index].text,cod[index].text,pool[index].text))
 
 
-                    WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH,'//a[@title="Contactos"]'))).click()
-                    nome=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//button[@data-automationid="FieldRenderer-name"]')))
-                    try:
-                        email=WebDriverWait(browser, 10).until(EC.visibility_of_all_elements_located((By.XPATH,'//div[@class="sp-field-customFormatter"]/a')))
-                    except TimeoutException:
-                        email=[]
-                        ema=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//div[@class="od-FieldRenderer-text fieldText_875b1af5"]')))
+#                    WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH,'//a[@title="Contactos"]'))).click()
+#                    nome=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//button[@data-automationid="FieldRenderer-name"]')))
+#                    try:
+#                        email=WebDriverWait(browser, 10).until(EC.visibility_of_all_elements_located((By.XPATH,'//div[@class="sp-field-customFormatter"]/a')))
+#                    except TimeoutException:
+#                        email=[]
+#                        ema=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//div[@class="od-FieldRenderer-text fieldText_875b1af5"]')))
+#
+#                        for em in ema:
+#                            if em.location['x'] ==  668:
+#                                email.append(em)
+#                        pass
+#                    user=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//div[contains(@class,"field_875b1af5")]')))
+#                    nomes=[]
+##                    print(len(nome),len(email),len(user))
+#                    red=0
+#                    for index3 in range(len(nome)):
+##                        print(index3,red)
+#                        for windex in range(len(user)):
+#                            if nome[index3].text.split(" ")[0].lower() == user[windex].text.split(" ")[0].lower():
+#                                nomes.append((nome[index3].text,email[index3].text,user[windex].text))
+#                                red=1
+#                                break
+#                            
+#                        if red == 0: 
+#                            nomes.append((nome[index3].text,email[index3].text,"")) 
+#                        else:
+#                            red = 0
 
-                        for em in ema:
-                            if em.location['x'] ==  668:
-                                email.append(em)
-                        pass
-                    user=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//div[contains(@class,"field_875b1af5")]')))
-                    nomes=[]
-#                    print(len(nome),len(email),len(user))
-                    red=0
-                    for index3 in range(len(nome)):
-#                        print(index3,red)
-                        for windex in range(len(user)):
-                            if nome[index3].text.split(" ")[0].lower() == user[windex].text.split(" ")[0].lower():
-                                nomes.append((nome[index3].text,email[index3].text,user[windex].text))
-                                red=1
-                                break
-                            
-                        if red == 0: 
-                            nomes.append((nome[index3].text,email[index3].text,"")) 
-                        else:
-                            red = 0
-                            
+         
+
+
+
                     aut = WebDriverWait(browser, 15).until(EC.element_to_be_clickable((By.XPATH, '//span[text()="Autorizados"]'))).click()
                     auts=WebDriverWait(browser, 15).until(EC.visibility_of_all_elements_located((By.XPATH,'//button[contains(@class,"od-FieldRender-lookup")]')))
-#                        print(auts)
-#                        print('passa aqui')
                     
+                    nomes=[]
+                    for naut in auts:
+                        browser.execute_script("return arguments[0].scrollIntoView();", naut)
+                        if naut.location['x'] == 518:
+                            e_mail, user = get_window1(naut,browser)
+
+                            for no in nomes:
+                                if naut.text in no[0]:
+                                    break
+                            else:
+                                nomes.append((naut.text,e_mail, user))                                
 
                     for index2 in range(len(auts)):
 #                            XY=auts[index2].location
